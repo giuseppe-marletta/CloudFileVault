@@ -1,6 +1,6 @@
 # This Dockerfile is used to build a Docker image for the user-service application.
 # It uses the OpenJDK 21 base image with Alpine Linux for a lightweight container.
-FROM openjdk:21-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 
 # Set the working directory
 WORKDIR /app

@@ -20,5 +20,6 @@ public class AuthServiceApplication {
    public String hello() {
       return "Hello from Auth Service!";
    }
+   
 }
 
