@@ -11,4 +11,4 @@ COPY target/auth-service-0.0.1-SNAPSHOT.jar auth-service.jar
 
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+ENTRYPOINT [ "java", "-jar", "auth-service.jar" ]
