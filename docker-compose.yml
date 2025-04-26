@@ -18,6 +18,7 @@ services:
       - "8081:8080"  # Espone il servizio sulla porta 8081
     depends_on:
       - rabbitmq  # Assicura che RabbitMQ sia avviato prima del servizio
+      - dynamodb
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     networks:
@@ -46,6 +47,15 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
     networks:
       - usermanager-network
+  
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"  # Espone DynamoDB sulla porta 8000
+    networks:
+      - usermanager-network
+    
 
 networks:
   usermanager-network:

@@ -1,0 +1,25 @@
+package com.github.giuseppemarletta.auth_service.model;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
+import lombok.Data;
+
+@Data
+@DynamoDBTable(tableName = "users")
+public class User{
+
+    @DynamoDBHashKey(attributeName = "id")
+    private String id;
+
+    @DynamoDBAttribute(attributeName = "email")
+    private String email;
+
+    @DynamoDBAttribute(attributeName = "password")
+    private String password;
+
+    @DynamoDBAttribute(attributeName = "role")
+    private String role;
+    
+}
