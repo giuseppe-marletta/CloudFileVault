@@ -78,7 +78,7 @@ public class AuthController {
                 .setSubject(user.getEmail()) // Set subject to email
                 .setIssuedAt(new Date()) // Set issued date to now
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
-                .signWith(key, SignatureAlgorithm.HS512) // Sign with HS512 algorithm
+                .signWith(key, SignatureAlgorithm.HS256) // Sign with HS512 algorithm
                 .compact(); // Compact the JWT token
     }
     

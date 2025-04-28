@@ -1,6 +1,8 @@
 package com.github.giuseppemarletta.auth_service.config;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient;
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -22,42 +24,54 @@ import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 
 
+
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.github.giuseppemarletta.auth_service.Repository") // Enable DynamoDB repositories
 public class DynamoDBConfig {
     
-    @Value("${aws.dynamodb.accessKeyId}")
+    
+    @Value("${amazon.aws.accesskey}")
     private String awsAccessKeyId;
 
-    @Value("${aws.dynamodb.secretKey}")
+    @Value("${amazon.aws.secretkey}")
     private String awsSecretKey;
 
-    @Value("${aws.dynamodb.region}")
-    private String Region;
+    //@Value("${aws.dynamodb.region}")
+    //private String Region;
 
-    @Value("${aws.dynamodb.endpoint}")
+    @Value("${amazon.dynamodb.endpoint}")
     private String endpoint;
+    
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
+        /* 
         AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 //.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKeyId, awsSecretKey)))
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("dummy-access-key", "dummy-secret-key")))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, Region)) // Set the endpoint and region (local)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://dynamodb-local:8000", "us-west-2")) // Set the endpoint and region (local)
+                .withClientConfiguration(new ClientConfiguration().withDisableHostPrefixInjection(true)) // Disable host prefix injection
                 //.withRegion(Region)  // Uncomment this line if you want to use the region in aws  
                 .build();
-
+        */
+        AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsAccessKeyId, awsSecretKey)))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, "us-west-2"))
+                .build();
         createTableIfNotExists(amazonDynamoDB); // Create the table if it doesn't exist
         return amazonDynamoDB;
     }
 
+    /* 
     @Bean
     @Primary 
     public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB) { // Create a DynamoDBMapper bean to interact with DynamoDB
         return new DynamoDBMapper(amazonDynamoDB);
-    }
+    } 
+
+    */
 
 
     private void createTableIfNotExists(AmazonDynamoDB amazonDynamoDB) {

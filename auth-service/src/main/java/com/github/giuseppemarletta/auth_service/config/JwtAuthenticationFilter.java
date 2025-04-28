@@ -37,6 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        System.out.println("[JwtAuthenticationFilter] Incoming request to: " + request.getRequestURI());
         String token = extractToken(request);
 
         if (token != null && !token.isEmpty()) {
