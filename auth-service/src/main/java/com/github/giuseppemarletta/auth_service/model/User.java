@@ -22,6 +22,8 @@ public class User{
     private String password;
 
     @DynamoDBAttribute(attributeName = "role")
-    private String role;
+    private String role; // USER, MODERATOR, ADMIN
+
+    
     
 }

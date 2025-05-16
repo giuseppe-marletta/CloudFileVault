@@ -104,7 +104,6 @@
         	<version>5.1.0</version>
     	</dependency>
 
-		
 		<dependency>
         	<groupId>com.amazonaws</groupId>
         	<artifactId>aws-java-sdk-dynamodb</artifactId>
@@ -117,6 +116,11 @@
         	<version>4.0.1</version>
         	<scope>provided</scope>
     	</dependency>
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
 
 	</dependencies>
 
