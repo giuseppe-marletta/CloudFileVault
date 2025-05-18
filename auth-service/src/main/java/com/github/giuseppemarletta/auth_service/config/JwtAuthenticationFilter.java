@@ -10,12 +10,13 @@ import jakarta.servlet.ServletException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.ArrayList;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 import java.io.IOException;
 import org.springframework.lang.NonNull;
 
 import com.github.giuseppemarletta.auth_service.Repository.UserRepository;
-import com.github.giuseppemarletta.auth_service.model.User;
+import com.github.giuseppemarletta.auth_service.model.User; 
 import com.github.giuseppemarletta.auth_service.service.JwtService;
 
 /**
@@ -44,7 +45,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null) {
                 User user = userRepository.findByEmail(username)
                         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                
+                // Create authority from user role
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole());
+                
+                // Create authentication with user authorities
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user, 
+                    null, 
+                    Collections.singletonList(authority)
+                );
+                
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

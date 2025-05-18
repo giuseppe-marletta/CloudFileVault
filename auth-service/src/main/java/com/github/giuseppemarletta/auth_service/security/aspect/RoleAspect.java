@@ -34,7 +34,7 @@ public class RoleAspect {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         RequireRole requireRole = method.getAnnotation(RequireRole.class);
 
-        if (requireRole != null) {
+        if (requireRole == null) {
             requireRole = joinPoint.getTarget().getClass().getAnnotation(RequireRole.class);
         }
 
@@ -50,9 +50,11 @@ public class RoleAspect {
         String token = authHeader.substring(7);
         Claims claims = jwtService.extractAllClaims(token);
 
-        String userRole = claims.get("role", String.class);
+        String userRole = "ROLE_" + claims.get("role", String.class);
 
-        if(Arrays.stream(requireRole.value()).noneMatch(r -> r.equalsIgnoreCase(userRole))) {
+        if(Arrays.stream(requireRole.value())
+                .map(role -> "ROLE_" + role)
+                .noneMatch(r -> r.equals(userRole))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to access this resource");
         }
 

@@ -18,10 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final List<String> VALID_ROLES = Arrays.asList("USER", "MODERATOR", "ADMIN");
 
     @Autowired
     private UserRepository userRepository;
@@ -48,10 +52,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
+        String role = registerRequest.getRole() != null ? registerRequest.getRole().toUpperCase() : "USER";
+        if (!VALID_ROLES.contains(role)) {
+            return ResponseEntity.badRequest().body("Invalid role. Valid roles are: " + VALID_ROLES);
+        }
+
         User user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRole("USER");
+        user.setRole(role);
         userRepository.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
