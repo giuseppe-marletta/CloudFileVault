@@ -32,9 +32,9 @@ public class JwtService {
 
     public String validateTokenAndGetUsername(String token) {
         try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(jwtSecret.getBytes())
-                    .build()
+            Claims claims = Jwts.parserBuilder() 
+                    .setSigningKey(jwtSecret.getBytes()) 
+                    .build() 
                     .parseClaimsJws(token)
                     .getBody();
             return claims.getSubject();

@@ -30,6 +30,8 @@ public class RoleAspect {
 
     @Around("@annotation(com.github.giuseppemarletta.auth_service.security.annotation.RequireRole) || @within(com.github.giuseppemarletta.auth_service.security.annotation.RequireRole)")
     public Object checkRole(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        System.out.println("controllo ruolo");
         
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         RequireRole requireRole = method.getAnnotation(RequireRole.class);
@@ -42,19 +44,22 @@ public class RoleAspect {
             return joinPoint.proceed();
         }
 
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization"); 
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"); 
         }
 
         String token = authHeader.substring(7);
         Claims claims = jwtService.extractAllClaims(token);
 
         String userRole = "ROLE_" + claims.get("role", String.class);
+        System.out.println("User role from token: " + userRole);
+        System.out.println("Required roles: " + Arrays.toString(requireRole.value()));
 
         if(Arrays.stream(requireRole.value())
                 .map(role -> "ROLE_" + role)
                 .noneMatch(r -> r.equals(userRole))) {
+            System.out.println("Access denied. User role " + userRole + " is not authorized");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to access this resource");
         }
 
