@@ -1,0 +1,9 @@
+*.pem
+*.key
+*.keystore
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+docker/localstack/cache/ 
