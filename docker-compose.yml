@@ -91,15 +91,13 @@ services:
       - "4566:4566"  # Porta per l'API di LocalStack
     environment:
       - SERVICES=s3
-      - DEFAULT_REGION=eu-west-2
       - AWS_ACCESS_KEY_ID=key3
       - AWS_SECRET_ACCESS_KEY=key4
       - DEBUG=1
       - PERSISTENCE=1
-      - DATA_DIR=/var/lib/localstack
+      - LOCALSTACK_VOLUME_DIR=/var/lib/localstack
     volumes:
       - "./docker/localstack:/var/lib/localstack"
-      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   usermanager-network:
