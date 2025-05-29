@@ -24,7 +24,7 @@ public class FileStorageService {
     private final S3Client s3Client;
     private final FileMetadataRepository fileMetadataRepository;
 
-    @Value("${amazon.s3.bucket}")
+    @Value("${amazon.s3.bucket.name}")
     private String bucketName;
 
     public FileMetadata uploadFile(MultipartFile file, String userId) throws IOException {
