@@ -37,8 +37,10 @@ services:
     depends_on:
       - rabbitmq
       - dynamodb-local
+      - localstack
     links:
       - "dynamodb-local"
+      - "localstack"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - AWS_ACCESS_KEY_ID=key
@@ -98,6 +100,8 @@ services:
       - LOCALSTACK_VOLUME_DIR=/var/lib/localstack
     volumes:
       - "./docker/localstack:/var/lib/localstack"
+    networks:
+      - usermanager-network
 
 networks:
   usermanager-network:

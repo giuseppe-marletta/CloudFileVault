@@ -2,7 +2,7 @@
 
 # Wait for LocalStack to be ready
 echo "Waiting for LocalStack to be ready..."
-while ! curl -s http://localhost:4566/_localstack/health | grep -q '"s3": "running"'; do
+while ! curl -s http://localhost:4566/_localstack/health | grep -q '"s3": "\(running\|available\)"'; do
     sleep 1
 done
 

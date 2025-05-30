@@ -11,6 +11,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.S3Configuration;
 
 @Configuration
 public class S3config {
@@ -29,11 +30,17 @@ public class S3config {
 
     @Bean
     public S3Client s3Client() {
+        S3Configuration config = S3Configuration.builder()
+                .pathStyleAccessEnabled(true)
+                .build();
+
         S3ClientBuilder builder = S3Client.builder()
                 .region(Region.of(region)) 
                 .credentialsProvider(
                     StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKeyId, awsSecretKey))
-                );
+                )
+                .serviceConfiguration(config);
+
         if (endpoint != null && !endpoint.isEmpty()) {
             builder.endpointOverride(URI.create(endpoint));
         }
