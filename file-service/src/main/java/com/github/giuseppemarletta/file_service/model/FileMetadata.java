@@ -1,5 +1,7 @@
 package com.github.giuseppemarletta.file_service.model;
 
+import java.util.List;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
@@ -39,5 +41,7 @@ public class FileMetadata {
 
     @DynamoDBAttribute(attributeName = "visibility")
     private String visibility; // e.g., "public", "private", "restricted ROLE_BASED"
-
+    
+    @DynamoDBAttribute(attributeName = "allowedRoles")
+    private List<String> allowedRoles; // List of roles allowed to access the file, if visibility is ROLE_BASED
 }
