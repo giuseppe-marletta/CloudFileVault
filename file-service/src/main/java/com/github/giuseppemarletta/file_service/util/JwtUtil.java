@@ -1,6 +1,9 @@
 package com.github.giuseppemarletta.file_service.util;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,4 +25,15 @@ public class JwtUtil {
                 .getBody();
         return claims.getSubject(); // Assuming the email user is stored in the subject of the token
     }
+
+    public List<String> extractUserRolesFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        String role = claims.get("role", String.class);
+        return List.of(role);
+    }
+
 }

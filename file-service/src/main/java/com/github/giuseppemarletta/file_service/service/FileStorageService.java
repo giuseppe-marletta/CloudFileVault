@@ -4,11 +4,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.giuseppemarletta.file_service.Repository.FileMetadataRepository;
+import com.github.giuseppemarletta.file_service.dto.FileMetadataDto;
 import com.github.giuseppemarletta.file_service.model.FileMetadata;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -27,7 +32,7 @@ public class FileStorageService {
     @Value("${amazon.s3.bucket.name}")
     private String bucketName;
 
-    public FileMetadata uploadFile(MultipartFile file, String userId) throws IOException {
+    public FileMetadata uploadFile(MultipartFile file, String userId, String visibility, List<String> allowedRoles) throws IOException {
         String key = UUID.randomUUID().toString() + "_" + file.getOriginalFilename(); // Generate a unique key for the file
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -47,9 +52,40 @@ public class FileStorageService {
                 .fileSize(file.getSize())
                 .uploadDate(java.time.Instant.now().toString()) // Use ISO 8601 format
                 .s3Key(key)
-                .visibility("private") // Default visibility, can be changed later
+                .visibility(visibility.toUpperCase()) // Default visibility, can be changed later
                 .build();
+
+                if("ROLE_BASED".equalsIgnoreCase(visibility)) {
+                    fileMetadata.setAllowedRoles(allowedRoles != null ? allowedRoles : new ArrayList<>());
+                }
         // Save metadata to DynamoDB
         return fileMetadataRepository.save(fileMetadata);
     }
+
+    public List<FileMetadataDto> getVisibleFiles(String userId, List<String> userRoles) {
+        Iterable<FileMetadata> allFiles = fileMetadataRepository.findAll();
+
+        return StreamSupport.stream(allFiles.spliterator(), false)
+                .filter(file -> {
+                    switch(file.getVisibility()) {
+                        case "PUBLIC":
+                            return true;
+                        case "PRIVATE":
+                            return file.getOwnerId().equals(userId);
+                        case "ROLE_BASED":
+                            return file.getAllowedRoles() != null && userRoles.stream().anyMatch(file.getAllowedRoles()::contains);
+                        default:
+                            return false;
+                    }
+                })
+                .map(file -> new FileMetadataDto(
+                    file.getFileId(),
+                    file.getFileName(),
+                    file.getFileType(),
+                    file.getFileSize(),
+                    file.getUploadDate(),
+                    file.getVisibility()
+                ))
+                .collect(Collectors.toList());
+                }
 }
