@@ -1,49 +1,104 @@
 # ☁️ CloudFileVault
 
-> ⚠️ **Stato del progetto:** In fase di progettazione e sviluppo attivo.  
-> Le specifiche architetturali, i componenti e le tecnologie utilizzate sono in continua evoluzione.  
-> Il progetto potrebbe subire modifiche sostanziali durante il processo iterativo di progettazione.
+> ⚠️ **Stato del progetto:** In sviluppo attivo  
+> Il progetto evolve in modo iterativo, con estensioni architetturali continue basate su scenari reali cloud-native.
 
-CloudFileVault è un sistema distribuito di gestione file cloud-native, costruito con Spring Boot e progettato secondo le best practice AWS. Include autenticazione sicura, controllo degli accessi basato sui ruoli, gestione di file su Amazon S3, notifiche asincrone con RabbitMQ, tracing distribuito e resilienza tramite circuit breaker.
+CloudFileVault è una piattaforma distribuita per la gestione intelligente di file nel cloud. Ogni utente può autenticarsi, caricare file con controlli granulari di visibilità e ruolo, ricevere notifiche asincrone sugli eventi rilevanti, ed eseguire **azioni intelligenti sui file** in base al loro tipo o contenuto grazie all'integrazione con **Amazon Bedrock**.
+
+Il sistema segue un approccio modulare a microservizi, resiliente, osservabile e interamente gestito tramite AWS.
+
+---
 
 ## 🔧 Tecnologie principali
-- Spring Boot, Spring Security, AspectJ
-- Amazon S3, Amazon DynamoDB, RabbitMQ
+- **Spring Boot**, Spring Security, AspectJ
+- **Amazon S3**, **DynamoDB (via Spring Data DynamoDB)**, **RabbitMQ**
 - JWT, Scrypt, RBAC, DTO, Remote Facade
-- Resilience4j, OpenTelemetry, Jaeger
-- GitHub Actions, Terraform, AWS ECS Fargate
-- **Amazon SES** per l’invio di email (es. benvenuto, conferma registrazione)
-- **AWS Secrets Manager** per la gestione sicura delle credenziali (JWT secret, DynamoDB, ecc.)
-- **AWS X-Ray e CloudWatch** per tracing distribuito e osservabilità
-- **IAM Roles** per l’accesso sicuro a DynamoDB e S3
+- **Amazon Bedrock** (azioni intelligenti sui file)
+- **Amazon SES** per notifiche email (es. registrazione, alert)
+- **AWS X-Ray**, **OpenTelemetry**, **CloudWatch**
+- **AWS IAM Roles** per accesso controllato a S3 e DynamoDB
+- **Secrets Manager** per la gestione centralizzata dei segreti
+- GitHub Actions, Terraform, ECR, ECS Fargate
+
+---
 
 ## 📦 Microservizi
-- `auth-service` – Autenticazione e gestione token
-- `user-service` – Profilo utente e ruoli
-- `file-service` – Upload/download su S3
-- `notification-service` – Notifiche via eventi RabbitMQ
+- `auth-service`: Autenticazione, registrazione, rilascio token JWT
+- `user-service`: Gestione ruoli e profilo utente
+- `file-service`: Upload/download file, visibilità e permessi
+- `notification-service`: Notifiche asincrone via RabbitMQ + Amazon SES
+- `action-service`: Azioni automatiche sui file (es. esecuzione .py, analisi .csv, compilazione .java) orchestrate via Bedrock
+
+---
 
 ## 📄 Funzionalità principali
-- 🔐 Login sicuro e rilascio JWT
-- 🗂️ Upload e download di file con visibilità basata sul ruolo
-- 📬 Notifiche asincrone su eventi (upload, accesso, promozione utente)
-- 📉 Tracciamento distribuito delle chiamate
-- 📧 Invio di email automatiche via Amazon SES (es. benvenuto, alert sicurezza)
-- 📁 Accesso differenziato a DynamoDB/S3 tramite IAM Role
+- 🔐 Autenticazione sicura e gestione JWT
+- 🗂️ Upload file con metadati (visibilità, ruoli richiesti)
+- 🔎 Azioni dinamiche sui file in base al tipo (Bedrock + modelli generativi)
+- 📬 Notifiche asincrone su eventi (upload, modifica ruolo, alert sicurezza)
+- ✉️ Email automatiche (benvenuto, alert) via Amazon SES
+- ⚙️ Accesso sicuro a DynamoDB e S3 tramite IAM Role
+
+---
+
+## 🎯 Obiettivi progettuali
+- Applicazione reale cloud-ready per portfolio (in stile AWS Solutions Architect)
+- Architettura scalabile, resiliente e osservabile
+- Integrazione AI cloud-native (Bedrock) per estendere le capacità del sistema
+- Esperienza end-to-end: sviluppo, CI/CD, infrastruttura-as-code, monitoraggio
+
+---
+
+## 💻 Interfaccia
+Il sistema include anche un’interfaccia web minimale (in fase di sviluppo) per l'interazione visuale con l'utente (upload file, login, anteprima).
+
+---
 
 ## 🚀 Deployment
-- Infrastruttura definita con Terraform
-- CI/CD con GitHub Actions
-- Deploy automatico su AWS ECS Fargate
-- Gestione segreti centralizzata tramite AWS Secrets Manager
+- Infrastruttura gestita con Terraform
+- CI/CD via GitHub Actions
+- Deploy su ECS Fargate con immagini Docker
+- Segreti centralizzati su AWS Secrets Manager
+
+---
 
 ## 🧪 Testing
-- JUnit, Mockito, JaCoCo, PITest
-- Tracing con Jaeger e AWS X-Ray
+- Test unitari e di integrazione con JUnit, Mockito
+- Copertura con JaCoCo e PITest
+- Tracing distribuito verificabile con Jaeger o X-Ray
 
-## 📚 Pattern distribuiti utilizzati
-- Authenticator, Client Session State
-- Remote Facade, DTO
+---
+
+## 📚 Pattern distribuiti adottati
+- Remote Facade
+- Data Transfer Object (DTO)
 - Role-based Access Control (RBAC)
-- Circuit Breaker, Message Queue
+- Client Session Token + Authenticator
+- Circuit Breaker (Resilience4j)
+- Event-driven Messaging (RabbitMQ)
+- Serverless AI Orchestration (Bedrock)
+
+---
+
+## 🛠️ Esempi di azioni intelligenti sui file (`action-service`)
+- `.java` → compilazione automatica
+- `.py` → esecuzione sandboxata
+- `.csv` → analisi descrittiva con LLM
+- `.txt` → riassunto automatico
+- `.json` → validazione schema
+- Estensibile via orchestrazione Amazon Bedrock
+
+---
+
+## 🧠 Estensioni future
+- Integrazione con API esterne per versioning file
+- Firma digitale dei documenti
+- Logica di approvazione per file visibili solo ad admin
+- SAML/OIDC per Single Sign-On aziendale
+
+---
+
+CloudFileVault è pensato come un progetto reale, pronto per essere discusso in un contesto lavorativo, universitario o di certificazione (es. AWS Developer / Solutions Architect).
+
+
 
