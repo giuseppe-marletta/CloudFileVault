@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 
 
 import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.github.giuseppemarletta.file_service.service.FileStorageService;
 import com.github.giuseppemarletta.file_service.util.JwtUtil;
@@ -34,13 +36,14 @@ public class FileController {
     public ResponseEntity<?> uploadFile(
             @RequestPart("file") MultipartFile file, 
             @RequestPart("visibility") String visibility, 
-            @RequestPart(value = "allowedRoles", required = false) List<String> allowedRoles, 
+            @RequestParam(value = "allowedRoles", required = false) String[] allowedRoles, 
             @RequestHeader("Authorization") String tokenHeader) {
         try {
             String token = tokenHeader.replace("Bearer ", "");
             String userId = jwtUtil.extractUserIdFromToken(token);
 
-            FileMetadata saved = fileStorageService.uploadFile(file, userId, visibility, allowedRoles);
+            List<String> rolesList = allowedRoles != null ? Arrays.asList(allowedRoles) : null;
+            FileMetadata saved = fileStorageService.uploadFile(file, userId, visibility, rolesList);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
