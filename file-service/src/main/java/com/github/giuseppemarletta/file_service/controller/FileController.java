@@ -14,6 +14,7 @@ import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +50,19 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<String> downloadFile(
+        @PathVariable String fileId,
+        @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.replace("Bearer ", "");
+        String userId = jwtUtil.extractUserIdFromToken(token);
+        List<String> rolesList = jwtUtil.extractUserRolesFromToken(token);
+
+        String downloadUrl = fileStorageService.getDownloadUrl(fileId, userId, rolesList);
+        return ResponseEntity.ok(downloadUrl);
+    }
+    
 
     @GetMapping("/visible")
     public ResponseEntity<List<FileMetadataDto>> getVisibleFiles(@RequestHeader("Authorization") String token) {
