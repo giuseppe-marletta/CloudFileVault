@@ -1,5 +1,8 @@
 # ☁️ CloudFileVault
 
+![Powered by Amazon Bedrock](https://img.shields.io/badge/Powered%20by-Amazon%20Bedrock-%23FF9900?logo=amazonaws&logoColor=white)
+
+
 > ⚠️ **Stato del progetto:** In sviluppo attivo  
 > Il progetto evolve in modo iterativo, con estensioni architetturali continue basate su scenari reali cloud-native.
 
